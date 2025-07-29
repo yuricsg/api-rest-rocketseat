@@ -1,12 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 import fastify from 'fastify'
+import crypto from 'node:crypto'
 import { db } from './database'
+import { title } from 'node:process'
 
 const app = fastify()
 
 app.get('/hello', async () => {
-  const tables = await db('sqlite_schema').select('*')
+  
+  const transaction = await db('transactions').insert({
+    id: crypto.randomUUID(),
+    title: 'Transação teste',
+    amount: 1000,
+  }).returning('*')
 
-  return tables
+  return transaction
 })
 
 app
